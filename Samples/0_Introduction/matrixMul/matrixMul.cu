@@ -254,7 +254,9 @@ int MatrixMultiply(int argc, char **argv,
   //     |<x, y>_cpu - <x,y>_gpu|/<|x|, |y|>  < eps
   double eps = 1.e-6;  // machine zero
 
-  for (int i = 0; i < static_cast<int>(dimsC.x * dimsC.y); i++) {
+  int Csize = static_cast<int>(dimsC.x * dimsC.y);
+  printf("Matrix size %d\n", Csize);
+  for (int i = 0; i < Csize; i++) {
     double abs_err = fabs(h_C[i] - (dimsA.x * valB));
     double dot_length = dimsA.x;
     double abs_val = fabs(h_C[i]);
