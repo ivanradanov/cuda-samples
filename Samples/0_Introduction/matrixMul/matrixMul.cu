@@ -51,6 +51,8 @@
 #include <helper_functions.h>
 #include <helper_cuda.h>
 
+#define BLOCK_SIZE_DEFINE 32
+
 /**
  * Matrix multiplication (CUDA Kernel) on the device: C = A * B
  * wA is A's width and wB is B's width
@@ -194,12 +196,11 @@ int MatrixMultiply(int argc, char **argv,
   printf("Computing result using CUDA Kernel...\n");
 
   // Performs warmup operation using matrixMul CUDA kernel
-  if (block_size == 16) {
-    MatrixMulCUDA<16>
+  if (block_size == BLOCK_SIZE_DEFINE) {
+    MatrixMulCUDA<BLOCK_SIZE_DEFINE>
         <<<grid, threads, 0, stream>>>(d_C, d_A, d_B, dimsA.x, dimsB.x);
   } else {
-    MatrixMulCUDA<32>
-        <<<grid, threads, 0, stream>>>(d_C, d_A, d_B, dimsA.x, dimsB.x);
+    abort();
   }
 
   printf("done\n");
@@ -212,12 +213,11 @@ int MatrixMultiply(int argc, char **argv,
   int nIter = 300;
 
   for (int j = 0; j < nIter; j++) {
-    if (block_size == 16) {
-      MatrixMulCUDA<16>
+    if (block_size == BLOCK_SIZE_DEFINE) {
+      MatrixMulCUDA<BLOCK_SIZE_DEFINE>
           <<<grid, threads, 0, stream>>>(d_C, d_A, d_B, dimsA.x, dimsB.x);
     } else {
-      MatrixMulCUDA<32>
-          <<<grid, threads, 0, stream>>>(d_C, d_A, d_B, dimsA.x, dimsB.x);
+      abort();
     }
   }
 
@@ -313,7 +313,7 @@ int main(int argc, char **argv) {
   // override the device ID based on input provided at the command line
   int dev = findCudaDevice(argc, (const char **)argv);
 
-  int block_size = 32;
+  int block_size = BLOCK_SIZE_DEFINE;
 
   dim3 dimsA(5 * 2 * block_size, 5 * 2 * block_size, 1);
   dim3 dimsB(5 * 4 * block_size, 5 * 2 * block_size, 1);
