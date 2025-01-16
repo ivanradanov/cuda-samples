@@ -196,12 +196,12 @@ int MatrixMultiply(int argc, char **argv,
   printf("Computing result using CUDA Kernel...\n");
 
   // Performs warmup operation using matrixMul CUDA kernel
-  if (block_size == BLOCK_SIZE_DEFINE) {
-    MatrixMulCUDA<BLOCK_SIZE_DEFINE>
-        <<<grid, threads, 0, stream>>>(d_C, d_A, d_B, dimsA.x, dimsB.x);
-  } else {
-    abort();
-  }
+  // if (block_size == BLOCK_SIZE_DEFINE) {
+  //   MatrixMulCUDA<BLOCK_SIZE_DEFINE>
+  //       <<<grid, threads, 0, stream>>>(d_C, d_A, d_B, dimsA.x, dimsB.x);
+  // } else {
+  //   abort();
+  // }
 
   printf("done\n");
   checkCudaErrors(cudaStreamSynchronize(stream));
@@ -210,7 +210,7 @@ int MatrixMultiply(int argc, char **argv,
   checkCudaErrors(cudaEventRecord(start, stream));
 
   // Execute the kernel
-  int nIter = 300;
+  int nIter = 100;
 
   for (int j = 0; j < nIter; j++) {
     if (block_size == BLOCK_SIZE_DEFINE) {
@@ -315,8 +315,8 @@ int main(int argc, char **argv) {
 
   int block_size = BLOCK_SIZE_DEFINE;
 
-  dim3 dimsA(5 * 2 * block_size, 5 * 2 * block_size, 1);
-  dim3 dimsB(5 * 4 * block_size, 5 * 2 * block_size, 1);
+  dim3 dimsA(40 * 2 * block_size, 40 * 2 * block_size, 1);
+  dim3 dimsB(40 * 4 * block_size, 40 * 2 * block_size, 1);
 
   // width of Matrix A
   if (checkCmdLineFlag(argc, (const char **)argv, "wA")) {
